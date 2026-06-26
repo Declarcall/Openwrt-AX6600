@@ -93,3 +93,7 @@ else
         echo "Memory patch: current value ($CURRENT_VAL) is sufficient, skipped."
     fi
 fi
+
+# 修复雅典娜 LED 缺少独立的 luci-i18n-athena-led-zh-cn 语言包导致的打包失败
+apply_sed_to_matches "./target/linux/qualcommax/image/" "Makefile" "s/luci-i18n-athena-led-zh-cn//g"
+apply_sed_to_matches "./target/linux/qualcommax/image/" "*.mk" "s/luci-i18n-athena-led-zh-cn//g"
