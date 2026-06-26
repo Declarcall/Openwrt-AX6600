@@ -60,6 +60,11 @@ jobs:
   core:
     name: ${{inputs.WRT_SOURCE}}
     runs-on: ubuntu-latest
+    
+    # 核心修改点 1：赋予 Actions 在运行结束时将日志文件 Push 回你仓库的写入权限
+    permissions:
+      contents: write
+
     steps:
       - name: Checkout Projects
         uses: actions/checkout@main
@@ -154,7 +159,6 @@ jobs:
           # 额外强制安装缺失的 python 依赖
           ./scripts/feeds install -f python3-pysocks python3-unidecode
 
-
       - name: Custom Packages
         run: |
           cd ./wrt/package/
@@ -184,13 +188,35 @@ jobs:
 
           make download -j$(nproc)
 
+      # 核心修改点 2：全面重构编译流程，捕获标准与错误输出并实时写入以日期时间归档的日志文件
       - name: Compile Firmware
         if: env.WRT_TEST != 'true'
         run: |
+          # 创建归档存储路径（例如：build_logs/2026-06-26_20-00）
+          LOG_DIR="$GITHUB_WORKSPACE/build_logs/$(TZ=Asia/Shanghai date +'%Y-%m-%d_%H-%m')"
+          mkdir -p "$LOG_DIR"
+          
           cd ./wrt/
+          
+          # 执行多线程编译，使用 tee 实时写入 log，编译失败则调用单线程获取精准排查日志
+          make -j$(nproc) 2>&1 | tee "$LOG_DIR/compile_detail.log" || {
+            echo "----------------------------------------------------"
+            echo "编译失败！切换单线程输出详细排查日志..."
+            echo "----------------------------------------------------"
+            make -j1 V=s 2>&1 | tee -a "$LOG_DIR/compile_detail.log"
+            exit 2
+          }
 
-          make -j$(nproc) || make -j1 V=s
+      # 核心修改点 3：增加自动推送步骤。使用 if: always() 确保无论编译是通关还是中途崩溃，都必将日志推回仓库
+      - name: Commit and Push build log to repository
+        uses: stefanzweifel/git-auto-commit-action@v5
+        if: always() && env.WRT_TEST != 'true'
+        with:
+          commit_message: "自动归档编译日志: $(TZ=Asia/Shanghai date +'%Y-%m-%d %H:%M:%S')"
+          file_pattern: 'build_logs/**'
+          disable_globbing: false
 
+      # 后面恢复你原有的其他打包、发布步骤
       - name: Machine Information
         run: |
           cd ./wrt/
