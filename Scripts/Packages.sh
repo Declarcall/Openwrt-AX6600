@@ -122,3 +122,11 @@ UPDATE_VERSION() {
 
 #UPDATE_VERSION "软件包名" "测试版，true，可选，默认为否"
 #UPDATE_VERSION "sing-box"
+
+# 强行物理切除容易翻车的高通原生 ECM 驱动模块
+rm -rf "$GITHUB_WORKSPACE/wrt/package/qca-nss/qca-nss-ecm"
+
+# 强制将系统的网络加速转向 100% 兼容新内核的 SFE 软加速
+echo "CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y" >> "$GITHUB_WORKSPACE/wrt/.config"
+echo "CONFIG_PACKAGE_kmod-fast-classifier=y" >> "$GITHUB_WORKSPACE/wrt/.config"
+
