@@ -204,3 +204,7 @@ CONFIG_PACKAGE_luci-app-wireless-regdb=y
 #老优化，副作用大
 CONFIG_PACKAGE_skb_recycler=n
 
+# 关闭高通原厂的 nss-ecm 加速，开启了开源的 SHORTCUT_FE（SFE）软加速。这样即便在 6.18 新内核下，雅典娜依然有高效率的转发加速可用，且编译绝对不会报错。
+CONFIG_PACKAGE_kmod-qca-nss-ecm=n
+CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y
+
