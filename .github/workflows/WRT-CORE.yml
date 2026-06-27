@@ -61,7 +61,7 @@ jobs:
     name: ${{inputs.WRT_SOURCE}}
     runs-on: ubuntu-latest
     
-    # 核心修改点：补全 actions: write 权限，允许脚本合法利用 GitHub CLI 删改清理过期缓存
+    # 补全 actions: write 权限，允许脚本合法利用 GitHub CLI 删改清理过期缓存
     permissions:
       contents: write
       actions: write
@@ -210,6 +210,16 @@ jobs:
             make -j1 V=s 2>&1 | tee -a "$LOG_DIR/compile_detail.log"
             exit 2
           }
+
+      # 核心新增点：在提交前，自动扫描并切除大于3天（72小时）以上的旧日志目录，防止撑爆仓库空间上限
+      - name: Cleanup stale logs (Older than 3 days)
+        if: always() && env.WRT_TEST != 'true'
+        run: |
+          if [ -d "$GITHUB_WORKSPACE/build_logs" ]; then
+            echo "========== 开始检查并清理3天前的旧日志 =========="
+            find "$GITHUB_WORKSPACE/build_logs" -maxdepth 1 -mindepth 1 -type d -mtime +3 -exec rm -rf {} \;
+            echo "========== 旧日志清理完成 =========="
+          fi
 
       # 自动推送步骤：使用 if: always() 确保无论编译是通关还是中途崩溃，都必将日志推回仓库
       - name: Commit and Push build log to repository
