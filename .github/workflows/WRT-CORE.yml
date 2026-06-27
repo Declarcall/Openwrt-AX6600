@@ -61,9 +61,10 @@ jobs:
     name: ${{inputs.WRT_SOURCE}}
     runs-on: ubuntu-latest
     
-    # 赋予 Actions 在运行结束时将日志文件 Push 回你仓库的写入权限
+    # 核心修改点：补全 actions: write 权限，允许脚本合法利用 GitHub CLI 删改清理过期缓存
     permissions:
       contents: write
+      actions: write
 
     steps:
       - name: Checkout Projects
@@ -188,7 +189,7 @@ jobs:
 
           make download -j$(nproc)
 
-      # 核心全面重构编译流程，添加 pipefail 准确捕获真实报错，防范假绿灯
+      # 全面重构编译流程，添加 pipefail 准确捕获真实报错，防范假绿灯
       - name: Compile Firmware
         if: env.WRT_TEST != 'true'
         run: |
@@ -314,7 +315,7 @@ jobs:
             刷机存在风险，请确认：
             - 已备份原厂固件
             - 能进入 U-Boot 或 TTL 恢复
-            - 了解分区结构
+            - 了解分区 structure
             ━━━━━━━━━━━━━━━━━━━━━━━
 
             💡 插件信息
