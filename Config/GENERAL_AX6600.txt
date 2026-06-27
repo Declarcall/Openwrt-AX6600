@@ -1,18 +1,33 @@
-# 主题及主题配置
+# 主题及主题配置（仅保留 argon）
 CONFIG_PACKAGE_luci-theme-argon=y
 CONFIG_PACKAGE_luci-app-argon-config=y
-CONFIG_PACKAGE_luci-theme-aurora=y
-CONFIG_PACKAGE_luci-app-aurora-config=y
-CONFIG_PACKAGE_luci-theme-kucat=y
-CONFIG_PACKAGE_luci-app-kucat-config=y
+CONFIG_PACKAGE_luci-theme-aurora=n
+CONFIG_PACKAGE_luci-app-aurora-config=n
+CONFIG_PACKAGE_luci-theme-kucat=n
+CONFIG_PACKAGE_luci-app-kucat-config=n
 
-# 核心代理/科学上网插件（已做精简以防 package/install 打包文件冲突）
+# =========================================================
+# 🎯 终极全家桶组合（全部强制开启，绝不放弃）
+# =========================================================
 CONFIG_PACKAGE_luci-app-homeproxy=y
 CONFIG_PACKAGE_luci-app-nikki=y
-CONFIG_PACKAGE_luci-app-openclash=y
 CONFIG_PACKAGE_luci-app-passwall=y
 CONFIG_PACKAGE_luci-app-passwall_Iptables_Transparent_Proxy=y
 CONFIG_PACKAGE_luci-app-passwall_Nftables_Transparent_Proxy=y
+CONFIG_PACKAGE_luci-app-openclash=y
+
+# =========================================================
+# ✂️ 激进瘦身防炸：精简 Passwall 附带的重复臃肿核心
+#（Passwall 共享外部核心，从而节省出 300MB+ 的巨大打包空间）
+# =========================================================
+CONFIG_PACKAGE_passwall_INCLUDE_Xray=y
+CONFIG_PACKAGE_passwall_INCLUDE_singbox=n
+CONFIG_PACKAGE_passwall_INCLUDE_V2ray=n
+CONFIG_PACKAGE_passwall_INCLUDE_Trojan_Plus=n
+CONFIG_PACKAGE_passwall_INCLUDE_Trojan_GO=n
+CONFIG_PACKAGE_passwall_INCLUDE_Shadowsocks_Rust=n
+CONFIG_PACKAGE_passwall_INCLUDE_Shadowsocks_Libev=n
+CONFIG_PACKAGE_passwall_INCLUDE_ShadowsocksR_Libev=n
 CONFIG_PACKAGE_luci-app-passwall2=n
 CONFIG_PACKAGE_luci-app-momo=n
 
@@ -24,11 +39,11 @@ CONFIG_PACKAGE_luci-app-tailscale=y
 CONFIG_PACKAGE_luci-app-easytier=y
 CONFIG_PACKAGE_luci-app-vnt=y
 
-# 实用工具与日常管理
+# 实用工具与日常管理（适当修剪掉次要的测试、跑分组件）
 CONFIG_PACKAGE_luci-app-ddns-go=y
 CONFIG_PACKAGE_luci-app-diskman=y
 CONFIG_PACKAGE_luci-app-gecoosac=y
-CONFIG_PACKAGE_luci-app-netspeedtest=y
+CONFIG_PACKAGE_luci-app-netspeedtest=n
 CONFIG_PACKAGE_luci-app-openlist2=y
 CONFIG_PACKAGE_luci-app-partexp=y
 CONFIG_PACKAGE_luci-app-quickfile=y
@@ -41,11 +56,8 @@ CONFIG_PACKAGE_luci-app-qmodem=y
 
 #增加插件
 CONFIG_PACKAGE_luci-app-autoreboot=y
-CONFIG_PACKAGE_luci-app-netspeedtest=n
 CONFIG_PACKAGE_luci-app-partexp=y
 CONFIG_PACKAGE_luci-app-samba4=y
-#CONFIG_PACKAGE_luci-app-sqm=y
-#CONFIG_PACKAGE_sqm-scripts-nss=y
 CONFIG_PACKAGE_luci-app-wolplus=y
 CONFIG_PACKAGE_luci-app-sentinel=y
 CONFIG_PACKAGE_luci-app-arpbind=y
@@ -66,7 +78,6 @@ CONFIG_PACKAGE_luci-app-upnp=n
 CONFIG_CCACHE=y
 CONFIG_DEVEL=n
 CONFIG_KERNEL_CC_OPTIMIZE_FOR_PERFORMANCE=y
-#支持同一平台下的多个设备型号 我只生成一个固件
 CONFIG_TARGET_MULTI_PROFILE=y
 CONFIG_TARGET_PER_DEVICE_ROOTFS=y
 CONFIG_TARGET_ROOTFS_INITRAMFS=n
@@ -122,21 +133,14 @@ CONFIG_PACKAGE_kmod-usb-net-cdc-mbim=n
 CONFIG_PACKAGE_kmod-usb-net-cdc-ncm=n
 CONFIG_PACKAGE_kmod-usb-net-cdc-subset=n
 CONFIG_PACKAGE_kmod-usb-net-huawei-cdc-ncm=n
-# iPhone USB 共享
-CONFIG_PACKAGE_kmod-usb-net-ipheth=n
 CONFIG_PACKAGE_kmod-usb-net-qmi-wwan=y
 CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-fibocom=y
 CONFIG_PACKAGE_kmod-usb-net-qmi-wwan-quectel=y
-# 安卓 RNDIS 共享
 CONFIG_PACKAGE_kmod-usb-net-rndis=n
 CONFIG_PACKAGE_kmod-usb-net-rtl8150=n
 CONFIG_PACKAGE_kmod-usb-net-rtl8152=y
 CONFIG_PACKAGE_kmod-usb-net-sierrawireless=n
 CONFIG_PACKAGE_kmod-usb-ohci=n
-CONFIG_PACKAGE_kmod-usb-storage=y
-CONFIG_PACKAGE_kmod-usb-storage-extras=y
-CONFIG_PACKAGE_kmod-usb-storage-uas=y
-CONFIG_PACKAGE_kmod-usb-uhci=n
 CONFIG_PACKAGE_kmod-usb-storage=y
 CONFIG_PACKAGE_kmod-usb-storage-extras=y
 CONFIG_PACKAGE_kmod-usb-storage-uas=y
@@ -154,7 +158,6 @@ CONFIG_PACKAGE_perl=n
 CONFIG_PACKAGE_libopenssl=y
 CONFIG_PACKAGE_libopenssl-conf=y
 CONFIG_PACKAGE_iptasn=y
-# U 盘自动挂载
 CONFIG_PACKAGE_automount=y
 CONFIG_PACKAGE_blkid=y
 CONFIG_PACKAGE_cfdisk=y
@@ -193,42 +196,40 @@ CONFIG_PACKAGE_usbutils=y
 CONFIG_PACKAGE_luci-app-athena-led=y
 CONFIG_PACKAGE_athena-led-control=y
 
-# 建议开启自动挂载，方便识别 eMMC 分区
+# 自动挂载方便识别 eMMC 分区
 CONFIG_PACKAGE_block-mount=y
 CONFIG_PACKAGE_luci-app-mountd=y
 
-# 补充分区扩容的必备工具
+# 分区扩容必备工具
 CONFIG_PACKAGE_resize2fs=y
 CONFIG_PACKAGE_tune2fs=y
 
 # 无线调节增强
 CONFIG_PACKAGE_iwinfo=y
 CONFIG_PACKAGE_luci-app-wireless-regdb=y
-#老优化，副作用大
 CONFIG_PACKAGE_skb_recycler=n
 
-# =========================================================
-# 网络转发加速调优（关闭高通原厂不兼容的 ECM，无缝转用 SFE 软加速）
-# =========================================================
+# 网络转发加速（SFE 软加速组合）
 CONFIG_PACKAGE_kmod-qca-nss-ecm=n
 CONFIG_PACKAGE_luci-app-turboacc_INCLUDE_SHORTCUT_FE=y
 CONFIG_PACKAGE_kmod-fast-classifier=y
 
 # =========================================================
-# 开启 Docker 核心组件及 Web 管理界面
+# 🐳 Docker 核心组件（全面保持不放弃）
 # =========================================================
 CONFIG_PACKAGE_luci-app-dockerman=y
 CONFIG_PACKAGE_luci-lib-docker=y
 CONFIG_PACKAGE_docker-compose=y
 CONFIG_PACKAGE_dockerd=y
-
-# 允许编译 Docker 必备的虚拟网卡与网络底层
 CONFIG_PACKAGE_kmod-veth=y
 CONFIG_PACKAGE_kmod-ikconfig=y
 
-# =========================================================
-# 强行关闭 Nginx 及其依赖，防止 package/install 打包死锁
-# =========================================================
+# 强行关闭 Nginx 防止打包死锁
 CONFIG_PACKAGE_nginx=n
 CONFIG_PACKAGE_luci-nginx=n
 CONFIG_PACKAGE_luci-app-nginx-pingos=n
+
+# =========================================================
+# 🚀 绕过包管理器大小限制：强行将虚拟打包根目录扩容至 1.2GB
+# =========================================================
+CONFIG_TARGET_ROOTFS_PARTSIZE=1280
